@@ -7,3 +7,9 @@
 - Build and run production app - `npm run build` and `npm run start`
 - Deploy to vercel preview - `vercel`
 - Deploy to vercel production - `vercel --prod`
+
+### Template for .env file
+
+```
+NEXT_PUBLIC_PRIVY_APP_ID=""
+```
