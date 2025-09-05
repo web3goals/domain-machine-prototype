@@ -1,13 +1,21 @@
 "use client";
 
+import { domaTestnet } from "@/chains/doma-testnet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
 import { Domain } from "@/types/domain";
-import { usePrivy } from "@privy-io/react-auth";
+import {
+  createDomaOrderbookClient,
+  OrderbookType,
+  ProgressStep,
+  viemToEthersSigner,
+} from "@doma-protocol/orderbook-sdk";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import axios from "axios";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
+import { Address, createWalletClient, custom, parseEther } from "viem";
 
 export default function PlaygroundPage() {
   return (
@@ -17,10 +25,101 @@ export default function PlaygroundPage() {
       </h1>
       <Separator className="my-8" />
       <div className="flex flex-col gap-4">
+        <PlaygroundDomainListing />
         <PlaygroundDomains />
         <PlaygroundPrivyUser />
       </div>
     </main>
+  );
+}
+
+function PlaygroundDomainListing() {
+  const { handleError } = useError();
+  const { wallets } = useWallets();
+  const [isProsessing, setIsProsessing] = useState(false);
+
+  async function handleListDomain() {
+    try {
+      setIsProsessing(true);
+      console.log("List domain...");
+
+      const wallet = wallets[0];
+      if (!wallet) {
+        throw new Error("Wallet undefined");
+      }
+
+      if (wallet.chainId.replace("eip155:", "") !== domaTestnet.id.toString()) {
+        throw new Error("Wrong chain");
+      }
+
+      const provider = await wallet.getEthereumProvider();
+
+      const walletClient = createWalletClient({
+        account: wallet.address as Address,
+        chain: domaTestnet,
+        transport: custom(provider),
+      });
+
+      const domaClient = createDomaOrderbookClient({
+        source: "",
+        chains: [domaTestnet],
+        apiClientOptions: {
+          baseUrl: "https://api-testnet.doma.xyz",
+          defaultHeaders: {
+            "API-Key": process.env.NEXT_PUBLIC_DOMA_API_KEY || "",
+          },
+        },
+      });
+
+      const signer = viemToEthersSigner(walletClient, "eip155:97476");
+
+      const response = await domaClient.createListing({
+        params: {
+          items: [
+            {
+              contract: "0x424bDf2E8a6F52Bd2c1C81D9437b0DC0309DF90f",
+              tokenId:
+                "93330031014567397590553973486828247023557895934242564465224990746168111751210",
+              price: parseEther("100").toString(),
+              currencyContractAddress:
+                "0x6f898cd313dcEe4D28A87F675BD93C471868B0Ac",
+            },
+          ],
+          source: "",
+          orderbook: OrderbookType.DOMA,
+          restrictedByZone: true,
+          zone: "0xCEF2071b4246DB4D0E076A377348339f31a07dEA",
+        },
+        signer: signer,
+        chainId: "eip155:97476",
+        onProgress: (step: ProgressStep[]) => {
+          console.log(`Progress Step: ${JSON.stringify(step)}`);
+        },
+      });
+      console.log(`response: ${JSON.stringify(response)}`);
+    } catch (error) {
+      handleError(error, "Failed, try again later");
+    } finally {
+      setIsProsessing(false);
+    }
+  }
+
+  return (
+    <div className="bg-card border p-6 rounded-xl">
+      <h2 className="text-2xl font-bold">Domain Listing</h2>
+      <Button
+        onClick={handleListDomain}
+        disabled={isProsessing}
+        className="mt-4"
+      >
+        {isProsessing ? (
+          <Loader2Icon className="animate-spin" />
+        ) : (
+          <ArrowRightIcon />
+        )}
+        List Domain
+      </Button>
+    </div>
   );
 }
 
