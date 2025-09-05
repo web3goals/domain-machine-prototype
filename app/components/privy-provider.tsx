@@ -8,7 +8,10 @@ export default function PrivyProvider({
   children: React.ReactNode;
 }) {
   return (
-    <PP appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID as string} config={{}}>
+    <PP
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID as string}
+      config={{ appearance: { showWalletLoginFirst: true } }}
+    >
       {children}
     </PP>
   );
