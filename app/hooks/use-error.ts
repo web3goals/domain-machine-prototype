@@ -8,7 +8,7 @@ export default function useError() {
     disableToast?: boolean
   ) => {
     // Print error
-    console.error(errorToString(error));
+    console.error(error);
     // Display toast
     if (!disableToast) {
       toast.error("Something went wrong :(", {
