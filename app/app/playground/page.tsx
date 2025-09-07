@@ -4,13 +4,13 @@ import { domaTestnet } from "@/chains/doma-testnet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
-import { Domain } from "@/types/domain";
 import {
   createDomaOrderbookClient,
   OrderbookType,
   ProgressStep,
   viemToEthersSigner,
-} from "@doma-protocol/orderbook-sdk";
+} from "@/orderbook-sdk";
+import { Domain } from "@/types/domain";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import axios from "axios";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
@@ -43,23 +43,25 @@ function PlaygroundDomainListing() {
       setIsProsessing(true);
       console.log("List domain...");
 
+      // Check wallet
       const wallet = wallets[0];
       if (!wallet) {
         throw new Error("Wallet undefined");
       }
-
       if (wallet.chainId.replace("eip155:", "") !== domaTestnet.id.toString()) {
         throw new Error("Wrong chain");
       }
 
+      // Create signer
       const provider = await wallet.getEthereumProvider();
-
       const walletClient = createWalletClient({
         account: wallet.address as Address,
         chain: domaTestnet,
         transport: custom(provider),
       });
+      const signer = viemToEthersSigner(walletClient, "eip155:97476");
 
+      // Create Doma client
       const domaClient = createDomaOrderbookClient({
         source: "",
         chains: [domaTestnet],
@@ -71,8 +73,7 @@ function PlaygroundDomainListing() {
         },
       });
 
-      const signer = viemToEthersSigner(walletClient, "eip155:97476");
-
+      // Send request
       const response = await domaClient.createListing({
         params: {
           items: [
@@ -80,15 +81,15 @@ function PlaygroundDomainListing() {
               contract: "0x424bDf2E8a6F52Bd2c1C81D9437b0DC0309DF90f",
               tokenId:
                 "93330031014567397590553973486828247023557895934242564465224990746168111751210",
-              price: parseEther("100").toString(),
+              price: parseEther("42.42").toString(),
               currencyContractAddress:
                 "0x6f898cd313dcEe4D28A87F675BD93C471868B0Ac",
             },
           ],
           source: "",
           orderbook: OrderbookType.DOMA,
-          restrictedByZone: true,
-          zone: "0xCEF2071b4246DB4D0E076A377348339f31a07dEA",
+          // restrictedByZone: true,
+          // zone: "0xCEF2071b4246DB4D0E076A377348339f31a07dEA",
         },
         signer: signer,
         chainId: "eip155:97476",
