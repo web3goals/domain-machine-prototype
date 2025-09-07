@@ -13,6 +13,7 @@ import {
 import { Domain } from "@/types/domain";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import axios from "axios";
+import { JsonRpcSigner } from "ethers";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { Address, createWalletClient, custom, parseEther } from "viem";
@@ -25,7 +26,7 @@ export default function PlaygroundPage() {
       </h1>
       <Separator className="my-8" />
       <div className="flex flex-col gap-4">
-        <PlaygroundDomainListing />
+        <PlaygroundDomainActions />
         <PlaygroundDomains />
         <PlaygroundPrivyUser />
       </div>
@@ -33,47 +34,47 @@ export default function PlaygroundPage() {
   );
 }
 
-function PlaygroundDomainListing() {
+function PlaygroundDomainActions() {
   const { handleError } = useError();
   const { wallets } = useWallets();
   const [isProsessing, setIsProsessing] = useState(false);
+
+  const domaClient = createDomaOrderbookClient({
+    source: "",
+    chains: [domaTestnet],
+    apiClientOptions: {
+      baseUrl: "https://api-testnet.doma.xyz",
+      defaultHeaders: {
+        "API-Key": process.env.NEXT_PUBLIC_DOMA_API_KEY || "",
+      },
+    },
+  });
+
+  async function getSigner(): Promise<JsonRpcSigner> {
+    // Check wallet
+    const wallet = wallets[0];
+    if (!wallet) {
+      throw new Error("Wallet undefined");
+    }
+    if (wallet.chainId.replace("eip155:", "") !== domaTestnet.id.toString()) {
+      throw new Error("Wrong chain");
+    }
+    // Create signer
+    const provider = await wallet.getEthereumProvider();
+    const walletClient = createWalletClient({
+      account: wallet.address as Address,
+      chain: domaTestnet,
+      transport: custom(provider),
+    });
+    return viemToEthersSigner(walletClient, "eip155:97476");
+  }
 
   async function handleListDomain() {
     try {
       setIsProsessing(true);
       console.log("List domain...");
 
-      // Check wallet
-      const wallet = wallets[0];
-      if (!wallet) {
-        throw new Error("Wallet undefined");
-      }
-      if (wallet.chainId.replace("eip155:", "") !== domaTestnet.id.toString()) {
-        throw new Error("Wrong chain");
-      }
-
-      // Create signer
-      const provider = await wallet.getEthereumProvider();
-      const walletClient = createWalletClient({
-        account: wallet.address as Address,
-        chain: domaTestnet,
-        transport: custom(provider),
-      });
-      const signer = viemToEthersSigner(walletClient, "eip155:97476");
-
-      // Create Doma client
-      const domaClient = createDomaOrderbookClient({
-        source: "",
-        chains: [domaTestnet],
-        apiClientOptions: {
-          baseUrl: "https://api-testnet.doma.xyz",
-          defaultHeaders: {
-            "API-Key": process.env.NEXT_PUBLIC_DOMA_API_KEY || "",
-          },
-        },
-      });
-
-      // Send request
+      const signer = await getSigner();
       const response = await domaClient.createListing({
         params: {
           items: [
@@ -107,19 +108,21 @@ function PlaygroundDomainListing() {
 
   return (
     <div className="bg-card border p-6 rounded-xl">
-      <h2 className="text-2xl font-bold">Domain Listing</h2>
-      <Button
-        onClick={handleListDomain}
-        disabled={isProsessing}
-        className="mt-4"
-      >
-        {isProsessing ? (
-          <Loader2Icon className="animate-spin" />
-        ) : (
-          <ArrowRightIcon />
-        )}
-        List Domain
-      </Button>
+      <h2 className="text-2xl font-bold">Domain Actions</h2>
+      <div className="flex flex-row gap-2">
+        <Button
+          onClick={handleListDomain}
+          disabled={isProsessing}
+          className="mt-4"
+        >
+          {isProsessing ? (
+            <Loader2Icon className="animate-spin" />
+          ) : (
+            <ArrowRightIcon />
+          )}
+          List Domain
+        </Button>
+      </div>
     </div>
   );
 }
