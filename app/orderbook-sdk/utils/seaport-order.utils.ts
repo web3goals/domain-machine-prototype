@@ -78,7 +78,9 @@ export function buildOfferOrderInput(
   item: OfferItem,
   buyerAddress: string,
   endTime: number,
-  fees: Fee[]
+  fees: Fee[],
+  restrictedByZone?: boolean,
+  zone?: string
 ): CreateOrderInput {
   const offerer = buyerAddress;
 
@@ -113,5 +115,7 @@ export function buildOfferOrderInput(
     offer: offerItems,
     consideration: considerationItems,
     fees,
+    restrictedByZone: restrictedByZone,
+    zone: zone,
   } as CreateOrderInput;
 }

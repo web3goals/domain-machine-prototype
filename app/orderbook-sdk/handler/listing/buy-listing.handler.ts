@@ -1,10 +1,13 @@
-import { SeaportOperationHandler } from '../seaport-operation.handler';
-import { DomaOrderbookError, DomaOrderbookErrorCode } from '../../errors';
+import { SeaportOperationHandler } from "../seaport-operation.handler";
+import { DomaOrderbookError, DomaOrderbookErrorCode } from "../../errors";
 
-import type { BuyListingParams, BuyListingResult } from './types';
-import type { TransactionReceipt } from 'ethers';
+import type { BuyListingParams, BuyListingResult } from "./types";
+import type { TransactionReceipt } from "ethers";
 
-export class BuyListingHandler extends SeaportOperationHandler<BuyListingParams, BuyListingResult> {
+export class BuyListingHandler extends SeaportOperationHandler<
+  BuyListingParams,
+  BuyListingResult
+> {
   public async execute(params: BuyListingParams): Promise<BuyListingResult> {
     const walletAddress = await this.signer.getAddress();
 
@@ -14,32 +17,39 @@ export class BuyListingHandler extends SeaportOperationHandler<BuyListingParams,
     });
 
     if (!listing) {
-      throw new DomaOrderbookError(DomaOrderbookErrorCode.ORDER_NOT_FOUND, 'Listing not found');
+      throw new DomaOrderbookError(
+        DomaOrderbookErrorCode.ORDER_NOT_FOUND,
+        "Listing not found"
+      );
     }
+
+    console.log({ listing });
 
     try {
       const orderUseCase = await this.seaport.fulfillOrder({
-        order: {
-          signature: listing.signature,
-          parameters: listing.parameters,
-        },
+        order: listing.order,
+        extraData: listing.extraData,
       });
 
       const result = await this.executeBlockchainOperation<TransactionReceipt>(
-        orderUseCase.actions,
+        orderUseCase.actions
       );
 
       return {
         gasPrice: result.gasPrice,
         gasUsed: result.gasUsed,
         transactionHash: result.hash as `0x${string}`,
-        status: result.status === 1 ? 'success' : 'reverted',
+        status: result.status === 1 ? "success" : "reverted",
       };
     } catch (error) {
-      throw DomaOrderbookError.fromError(error, DomaOrderbookErrorCode.BUY_LISTING_FAILED, {
-        chainId: this.chainId,
-        params,
-      });
+      throw DomaOrderbookError.fromError(
+        error,
+        DomaOrderbookErrorCode.BUY_LISTING_FAILED,
+        {
+          chainId: this.chainId,
+          params,
+        }
+      );
     }
   }
 }

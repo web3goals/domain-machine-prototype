@@ -1,6 +1,14 @@
-import type { OrderComponents } from '@opensea/seaport-js/lib/types';
+import type {
+  OrderComponents,
+  OrderWithCounter,
+} from "@opensea/seaport-js/lib/types";
 
-import type { Caip2ChainId, CurrencyToken, OrderbookFee, OrderbookType } from '../types';
+import type {
+  Caip2ChainId,
+  CurrencyToken,
+  OrderbookFee,
+  OrderbookType,
+} from "../types";
 
 export interface CreateListingRequest {
   signature: string;
@@ -20,8 +28,8 @@ export interface GetOrderRequest {
 }
 
 export interface GetOrderResponse {
-  signature: string;
-  parameters: OrderComponents;
+  extraData: string;
+  order: OrderWithCounter;
 }
 
 export interface CreateOfferRequest {
