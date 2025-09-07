@@ -1,7 +1,11 @@
-import type { ItemType } from '@opensea/seaport-js/lib/constants';
-import type { OrderWithCounter } from '@opensea/seaport-js/lib/types';
-import type { CancellationType, OrderbookFee, OrderbookType } from '../../types';
-import type { Hex } from 'viem';
+import type { ItemType } from "@opensea/seaport-js/lib/constants";
+import type { OrderWithCounter } from "@opensea/seaport-js/lib/types";
+import type {
+  CancellationType,
+  OrderbookFee,
+  OrderbookType,
+} from "../../types";
+import type { Hex } from "viem";
 
 export interface ListingItem {
   contract: string;
@@ -17,6 +21,8 @@ export interface CreateListingParams {
   source: string;
   orderbook: OrderbookType;
   marketplaceFees?: OrderbookFee[];
+  restrictedByZone?: boolean;
+  zone?: string;
 }
 
 export interface CreateListingResult {
@@ -32,7 +38,7 @@ export interface BuyListingParams {
 
 export interface BuyListingResult {
   transactionHash: Hex;
-  status: 'success' | 'reverted';
+  status: "success" | "reverted";
   gasUsed: bigint;
   gasPrice: bigint;
 }
@@ -44,7 +50,7 @@ export interface CancelListingParams {
 
 export interface CancelListingResult {
   transactionHash: Hex | null;
-  status: 'success' | 'reverted';
+  status: "success" | "reverted";
   gasUsed: bigint;
   gasPrice: bigint;
 }

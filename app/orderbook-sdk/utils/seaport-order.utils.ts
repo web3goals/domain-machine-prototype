@@ -4,12 +4,12 @@ import type {
   CreateOrderInput,
   CurrencyItem,
   Fee,
-} from '@opensea/seaport-js/lib/types';
-import { ItemType } from '@opensea/seaport-js/lib/constants';
-import type { ListingItem } from '../handler/listing/types';
-import type { OfferItem } from '../handler/offer/types';
-import { ZeroAddress } from 'ethers';
-import type { OrderbookFee } from '../types';
+} from "@opensea/seaport-js/lib/types";
+import { ItemType } from "@opensea/seaport-js/lib/constants";
+import type { ListingItem } from "../handler/listing/types";
+import type { OfferItem } from "../handler/offer/types";
+import { ZeroAddress } from "ethers";
+import type { OrderbookFee } from "../types";
 
 export function prepareFees(marketplaceFees?: OrderbookFee[]): Fee[] {
   return [
@@ -25,6 +25,8 @@ export function buildListingOrderInput(
   sellerAddress: string,
   endTime: number,
   fees: Fee[],
+  restrictedByZone?: boolean,
+  zone?: string
 ): CreateOrderInput {
   const offerer = sellerAddress;
 
@@ -34,7 +36,7 @@ export function buildListingOrderInput(
       itemType: ItemType.ERC1155,
       token: item.contract,
       identifier: item.tokenId,
-      amount: '1',
+      amount: "1",
     });
   } else {
     offerItems.push({
@@ -45,7 +47,10 @@ export function buildListingOrderInput(
   }
 
   const considerationItems: ConsiderationInputItem[] = [];
-  if (item.currencyContractAddress && item.currencyContractAddress !== ZeroAddress) {
+  if (
+    item.currencyContractAddress &&
+    item.currencyContractAddress !== ZeroAddress
+  ) {
     considerationItems.push({
       token: item.currencyContractAddress,
       amount: item.price,
@@ -64,6 +69,8 @@ export function buildListingOrderInput(
     offer: offerItems,
     consideration: considerationItems,
     fees,
+    restrictedByZone: restrictedByZone,
+    zone: zone,
   } as CreateOrderInput;
 }
 
@@ -71,7 +78,7 @@ export function buildOfferOrderInput(
   item: OfferItem,
   buyerAddress: string,
   endTime: number,
-  fees: Fee[],
+  fees: Fee[]
 ): CreateOrderInput {
   const offerer = buyerAddress;
 
@@ -88,7 +95,7 @@ export function buildOfferOrderInput(
       itemType: ItemType.ERC1155,
       token: item.contract,
       identifier: item.tokenId,
-      amount: '1',
+      amount: "1",
       recipient: offerer,
     });
   } else {
