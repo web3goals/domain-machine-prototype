@@ -1,5 +1,5 @@
-import { domaTestnet } from "@/chains/doma-testnet";
 import { Button } from "@/components/ui/button";
+import { chainConfig } from "@/config/chain";
 import useError from "@/hooks/use-error";
 import { Seaport } from "@opensea/seaport-js";
 import { ItemType } from "@opensea/seaport-js/lib/constants";
@@ -22,7 +22,9 @@ export default function PlaygroundSeaportActions() {
     if (!wallet) {
       throw new Error("Wallet undefined");
     }
-    if (wallet.chainId.replace("eip155:", "") !== domaTestnet.id.toString()) {
+    if (
+      wallet.chainId.replace("eip155:", "") !== chainConfig.chain.id.toString()
+    ) {
       throw new Error("Wrong chain");
     }
 
@@ -34,8 +36,8 @@ export default function PlaygroundSeaportActions() {
     // Create seaport
     return new Seaport(signer, {
       overrides: {
-        contractAddress: "0x0000000000000068F116a894984e2DB1123eB395",
-        seaportVersion: "1.6",
+        contractAddress: chainConfig.seaportContractAddress,
+        seaportVersion: chainConfig.seaportVersion,
       },
     });
   }
