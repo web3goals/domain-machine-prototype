@@ -20,7 +20,7 @@ export function ListingCard(props: { listing: Listing }) {
           <ListingCardCreatedAt listing={props.listing} />
           <ListingCardScore listing={props.listing} />
           <ListingCardStatus />
-          <Separator className="my-4" />
+          <Separator className="my-2" />
           <ListingCardActions listing={props.listing} />
         </div>
       </div>
@@ -86,13 +86,13 @@ function ListingCardActions(props: { listing: Listing }) {
         href={`https://dashboard-testnet.doma.xyz/domain/${props.listing.domain.name}`}
         target="_blank"
       >
-        <Button>
+        <Button variant="secondary">
           <ExternalLink />
           Open Doma
         </Button>
       </Link>
       <Link href="https://testnet.d3.app/" target="_blank">
-        <Button>
+        <Button variant="secondary">
           <ExternalLink />
           Open D3
         </Button>
