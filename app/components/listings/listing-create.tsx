@@ -160,6 +160,7 @@ function ListingCreateForm(props: { domains: Domain[] }) {
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  disabled={isProcessing}
                   className="flex flex-col space-y-1"
                 >
                   {props.domains.map((domain) => (
