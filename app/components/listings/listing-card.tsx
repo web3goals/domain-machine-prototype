@@ -16,6 +16,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 import { formatEther } from "viem";
+import { chainConfig } from "@/config/chain";
 
 export function ListingCard(props: { listing: Listing; onUpdate: () => void }) {
   const { wallets } = useWallets();
@@ -171,7 +172,10 @@ function ListingCardStatusContent(props: {
   ) {
     return (
       <>
-        <p className="text-sm">Domain sold for 0.01 WETH</p>
+        <p className="text-sm">
+          Domain sold for {formatEther(BigInt(props.listing.buyValue))}{" "}
+          {chainConfig.buyTokenSymbol}
+        </p>
         <p className="text-sm">Waiting for the treasure distribution</p>
       </>
     );
@@ -185,10 +189,14 @@ function ListingCardStatusContent(props: {
   ) {
     return (
       <>
-        <p className="text-sm">Domain sold for 0.01 WETH</p>
+        <p className="text-sm">
+          Domain sold for {formatEther(BigInt(props.listing.buyValue))}{" "}
+          {chainConfig.buyTokenSymbol}
+        </p>
         <p className="text-sm">
           Treasure share of{" "}
-          {formatEther(BigInt(props.listing.treasuryShareValue!))} WETH received
+          {formatEther(BigInt(props.listing.treasuryShareValue!))}{" "}
+          {chainConfig.buyTokenSymbol} received
         </p>
       </>
     );

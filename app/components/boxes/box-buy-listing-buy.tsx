@@ -1,5 +1,8 @@
+import { chainConfig } from "@/config/chain";
 import useError from "@/hooks/use-error";
 import { Listing } from "@/mongodb/models/listing";
+import { useWallets } from "@privy-io/react-auth";
+import axios from "axios";
 import {
   CheckIcon,
   DollarSignIcon,
@@ -11,9 +14,8 @@ import {
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
+import { formatEther } from "viem";
 import { Button } from "../ui/button";
-import axios from "axios";
-import { useWallets } from "@privy-io/react-auth";
 
 export default function BoxBuyListingBuy(props: {
   listing: Listing;
@@ -121,7 +123,10 @@ export default function BoxBuyListingBuy(props: {
             </div>
             <div className="flex-1">
               <p className="text-sm text-muted-foreground">Price</p>
-              <p className="text-sm">0.01 WETH</p>
+              <p className="text-sm">
+                {formatEther(chainConfig.buyDomainValue)}{" "}
+                {chainConfig.buyTokenSymbol}
+              </p>
             </div>
           </div>
           {/* Actions */}

@@ -1,3 +1,4 @@
+import { chainConfig } from "@/config/chain";
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { Listing } from "@/mongodb/models/listing";
 import { findListings, upsertListing } from "@/mongodb/services/listings";
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
       creatorAddress: bodyParseResult.data.creatorAddress,
       domain: bodyParseResult.data.domain,
       domainScore: domainScore,
+      buyValue: chainConfig.buyDomainValue.toString(),
       _id: new ObjectId(),
     };
     await upsertListing(listing);

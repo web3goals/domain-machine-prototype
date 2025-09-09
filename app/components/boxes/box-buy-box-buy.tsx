@@ -7,6 +7,8 @@ import { DollarSignIcon, GiftIcon, Loader2Icon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { formatEther } from "viem";
+import { chainConfig } from "@/config/chain";
 
 export default function BoxBuyBoxBuy(props: {
   onBuyBox: (box: Box, listing: Listing) => void;
@@ -89,9 +91,13 @@ export default function BoxBuyBoxBuy(props: {
             </div>
             <div className="flex-1">
               <p className="text-sm text-muted-foreground">Price</p>
-              <p className="text-sm">0.025 WETH to open a mystery box</p>
               <p className="text-sm">
-                0.01 WETH to buy a domain if you like it
+                {formatEther(chainConfig.buyBoxValue)}{" "}
+                {chainConfig.buyTokenSymbol} to open a mystery box
+              </p>
+              <p className="text-sm">
+                {formatEther(chainConfig.buyDomainValue)}{" "}
+                {chainConfig.buyTokenSymbol} to buy a domain if you like it
               </p>
             </div>
           </div>
