@@ -34,11 +34,11 @@ export default function ListingsCreated() {
   }, [wallets]);
 
   return (
-    <div className="container mx-auto px-4 lg:px-80 py-16">
+    <div className="container mx-auto px-4 lg:px-40 xl:px-80 py-16">
       <PageHeader
         icon={<AlignJustifyIcon />}
         title="Listed domains"
-        subtitle="Manage all the domains you’ve listed for sale"
+        subtitle="Manage all the domains you've listed for sale"
       />
       <Separator className="my-8" />
       <Link href="/listings/create">

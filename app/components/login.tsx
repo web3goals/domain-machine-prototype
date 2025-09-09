@@ -8,7 +8,7 @@ export function Login() {
   const { login } = usePrivy();
 
   return (
-    <div className="container mx-auto px-4 lg:px-80 py-16">
+    <div className="container mx-auto px-4 lg:px-40 xl:px-80 py-16">
       <PageHeader
         icon={<LogInIcon />}
         title="Login"
