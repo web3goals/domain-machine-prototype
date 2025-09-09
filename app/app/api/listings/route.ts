@@ -1,6 +1,7 @@
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { Listing } from "@/mongodb/models/listing";
 import { findListings, insertListing } from "@/mongodb/services/listings";
+import { DomainScore } from "@/types/domain-score";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -61,11 +62,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Define random domain score
+    const mozDa = Math.floor(Math.random() * 101);
+    const ahrefsDr = Math.floor(Math.random() * 101);
+    const semrushAuthority = Math.floor(Math.random() * 101);
+    const average = Math.floor((mozDa + ahrefsDr + semrushAuthority) / 3);
+    const domainScore: DomainScore = {
+      average: average,
+      mozDa: mozDa,
+      ahrefsDr: ahrefsDr,
+      semrushAuthority: semrushAuthority,
+    };
+
     // Create and insert the listing
     const listing: Listing = {
       createdAt: new Date(),
       creatorAddress: bodyParseResult.data.creatorAddress,
       domain: bodyParseResult.data.domain,
+      domainScore: domainScore,
     };
     await insertListing(listing);
 

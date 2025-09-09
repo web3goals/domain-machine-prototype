@@ -1,5 +1,5 @@
 import { Listing } from "@/mongodb/models/listing";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, StarIcon } from "lucide-react";
 
 // TODO: Complete the component
 export function CreatedListingCard(props: { listing: Listing }) {
@@ -24,6 +24,25 @@ export function CreatedListingCard(props: { listing: Listing }) {
               <p className="text-sm text-muted-foreground">Listed</p>
               <p className="text-sm">
                 {new Date(props.listing.createdAt).toLocaleString()}
+              </p>
+            </div>
+          </div>
+          {/* Listed */}
+          <div className="flex flex-row gap-3">
+            <div className="flex items-center justify-center size-8 rounded-full bg-primary">
+              <StarIcon className="size-4 text-primary-foreground" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-muted-foreground">Score</p>
+              <p className="text-sm">{props.listing.domainScore.average}</p>
+              <p className="text-sm text-muted-foreground">
+                Moz DA = {props.listing.domainScore.mozDa}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Ahrefs DR = {props.listing.domainScore.ahrefsDr}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Semrush Authority = {props.listing.domainScore.semrushAuthority}
               </p>
             </div>
           </div>
