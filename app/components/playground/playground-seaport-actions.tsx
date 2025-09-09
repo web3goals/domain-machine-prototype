@@ -44,7 +44,7 @@ export default function PlaygroundSeaportActions() {
   async function handleCreateOffer() {
     try {
       setIsProcessing(true);
-      console.log("Create offer...");
+      console.log("Creating offer...");
 
       const seaport = await getSeaport();
       const order = await seaport.createOrder({
@@ -110,7 +110,7 @@ export default function PlaygroundSeaportActions() {
   async function handleAcceptOffer() {
     try {
       setIsProcessing(true);
-      console.log("Accept offer...");
+      console.log("Accepting offer...");
 
       const seaport = await getSeaport();
 

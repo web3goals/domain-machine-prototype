@@ -15,7 +15,7 @@ export default function PlaygroundDomains() {
   async function handleLoadDomains() {
     try {
       setIsProcessing(true);
-      console.log("Load domains...");
+      console.log("Loading domains...");
 
       const wallet = wallets[0];
       if (!wallet) {
