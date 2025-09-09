@@ -12,12 +12,15 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import { Button } from "../ui/button";
+import axios from "axios";
+import { useWallets } from "@privy-io/react-auth";
 
 export default function BoxBuyListingBuy(props: {
   listing: Listing;
   onBuyListing: () => void;
   onSkipListing: () => void;
 }) {
+  const { wallets } = useWallets();
   const { handleError } = useError();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -30,8 +33,20 @@ export default function BoxBuyListingBuy(props: {
       console.log("Buying listing...");
       setIsProcessing(true);
 
+      const wallet = wallets[0];
+      if (!wallet) {
+        throw new Error("Wallet undefined");
+      }
+
       // TODO: Implement
       // Create an offer using Doma protocol
+      const offerId = "0x0";
+
+      // Update listing
+      await axios.patch(`/api/listings/${props.listing._id}`, {
+        buyerAddress: wallet.address,
+        buyerOfferId: offerId,
+      });
 
       props.onBuyListing();
     } catch (error) {
