@@ -22,6 +22,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import Image from "next/image";
 
 export function SiteHeader() {
   const { ready, authenticated, user, login, logout } = usePrivy();
@@ -32,8 +33,7 @@ export function SiteHeader() {
         {/* Left part */}
         <div className="flex gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-3">
-            {/* TODO: Add icon */}
-            {/* <div className="flex flex-col items-center size-9">
+            <div className="flex flex-col items-center size-9">
               <Image
                 src="/images/icon.png"
                 alt="Icon"
@@ -43,7 +43,7 @@ export function SiteHeader() {
                 sizes="100vw"
                 className="w-full rounded-xl"
               />
-            </div> */}
+            </div>
             <span className="text-foreground font-bold">{siteConfig.name}</span>
           </Link>
         </div>
