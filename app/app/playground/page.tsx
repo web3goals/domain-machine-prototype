@@ -4,19 +4,14 @@ import { domaTestnet } from "@/chains/doma-testnet";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
-import {
-  createDomaOrderbookClient,
-  OrderbookType,
-  ProgressStep,
-  viemToEthersSigner,
-} from "@/orderbook-sdk";
 import { Domain } from "@/types/domain";
+import { Seaport } from "@opensea/seaport-js";
+import { ItemType } from "@opensea/seaport-js/lib/constants";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import axios from "axios";
-import { JsonRpcSigner } from "ethers";
+import { ethers } from "ethers";
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
-import { Address, createWalletClient, custom, parseEther } from "viem";
 
 export default function PlaygroundPage() {
   return (
@@ -26,7 +21,7 @@ export default function PlaygroundPage() {
       </h1>
       <Separator className="my-8" />
       <div className="flex flex-col gap-4">
-        <PlaygroundDomainActions />
+        <PlaygroundSeaportActions />
         <PlaygroundDomains />
         <PlaygroundPrivy />
       </div>
@@ -34,27 +29,14 @@ export default function PlaygroundPage() {
   );
 }
 
-function PlaygroundDomainActions() {
+function PlaygroundSeaportActions() {
   const { handleError } = useError();
-  const {} = usePrivy();
   const { wallets } = useWallets();
   const [isProsessing, setIsProsessing] = useState(false);
+  const accountOne = "0xcbFb1a51aCf21bdac6F62e41c6DfAd390e6Eb006";
+  const accountTwo = "0xf35b5c255FDdF8057B8Df4C59a1FDb81193994dE";
 
-  const tokenId =
-    "107137215232458749996855170311736713895383956783073784797511084938723223236735";
-
-  const domaClient = createDomaOrderbookClient({
-    source: "",
-    chains: [domaTestnet],
-    apiClientOptions: {
-      baseUrl: "https://api-testnet.doma.xyz",
-      defaultHeaders: {
-        "API-Key": process.env.NEXT_PUBLIC_DOMA_API_KEY || "",
-      },
-    },
-  });
-
-  async function getSigner(): Promise<JsonRpcSigner> {
+  async function getSeaport(): Promise<Seaport> {
     // Check wallet
     const wallet = wallets[0];
     if (!wallet) {
@@ -63,107 +45,80 @@ function PlaygroundDomainActions() {
     if (wallet.chainId.replace("eip155:", "") !== domaTestnet.id.toString()) {
       throw new Error("Wrong chain");
     }
+
     // Create signer
     const provider = await wallet.getEthereumProvider();
-    const walletClient = createWalletClient({
-      account: wallet.address as Address,
-      chain: domaTestnet,
-      transport: custom(provider),
+    const ethersProvider = new ethers.BrowserProvider(provider);
+    const signer = await ethersProvider.getSigner();
+
+    // Create seaport
+    return new Seaport(signer, {
+      overrides: {
+        contractAddress: "0x0000000000000068F116a894984e2DB1123eB395",
+        seaportVersion: "1.6",
+      },
     });
-    return viemToEthersSigner(walletClient, "eip155:97476");
   }
 
-  async function handleCreateListing() {
-    try {
-      setIsProsessing(true);
-      console.log("Create listing...");
-
-      const signer = await getSigner();
-      const response = await domaClient.createListing({
-        params: {
-          items: [
-            {
-              contract: "0x424bdf2e8a6f52bd2c1c81d9437b0dc0309df90f",
-              tokenId:
-                "93330031014567397590553973486828247023557895934242564465224990746168111751210",
-              price: parseEther("0.001").toString(),
-              currencyContractAddress:
-                "0x6f898cd313dcee4d28a87f675bd93c471868b0ac",
-            },
-          ],
-          source: "",
-          orderbook: OrderbookType.DOMA,
-          restrictedByZone: true,
-          zone: "0xCEF2071b4246DB4D0E076A377348339f31a07dEA",
-        },
-        signer: signer,
-        chainId: "eip155:97476",
-        onProgress: (step: ProgressStep[]) => {
-          console.log(`Progress Step: ${JSON.stringify(step)}`);
-        },
-      });
-      console.log(`response: ${JSON.stringify(response)}`);
-    } catch (error) {
-      handleError(error, "Failed, try again later");
-    } finally {
-      setIsProsessing(false);
-    }
-  }
-
-  async function handleBuyListing() {
-    try {
-      setIsProsessing(true);
-      console.log("Buy listing...");
-
-      const signer = await getSigner();
-      const response = await domaClient.buyListing({
-        params: {
-          orderId:
-            "0xf92c7557b4b560bfd6f1439240fa0cf13fe4b303d8a926eb1883dcb82bf24f9a",
-        },
-        signer: signer,
-        chainId: "eip155:97476",
-        onProgress: (step: ProgressStep[]) => {
-          console.log(`Progress Step: ${JSON.stringify(step)}`);
-        },
-      });
-      console.log(`response: ${JSON.stringify(response)}`);
-    } catch (error) {
-      handleError(error, "Failed, try again later");
-    } finally {
-      setIsProsessing(false);
-    }
-  }
-
+  // TODO: Approve WETH spending before creating offer
   async function handleCreateOffer() {
     try {
       setIsProsessing(true);
       console.log("Create offer...");
 
-      const signer = await getSigner();
-      const response = await domaClient.createOffer({
-        params: {
-          items: [
-            {
-              contract: "0x424bdf2e8a6f52bd2c1c81d9437b0dc0309df90f",
-              tokenId: tokenId,
-              price: parseEther("0.002").toString(),
-              currencyContractAddress:
-                "0x6f898cd313dcee4d28a87f675bd93c471868b0ac",
-            },
-          ],
-          source: "",
-          orderbook: OrderbookType.DOMA,
-          restrictedByZone: true,
-          zone: "0xCEF2071b4246DB4D0E076A377348339f31a07dEA",
-        },
-        signer: signer,
-        chainId: "eip155:97476",
-        onProgress: (step: ProgressStep[]) => {
-          console.log(`Progress Step: ${JSON.stringify(step)}`);
-        },
+      const seaport = await getSeaport();
+      const order = await seaport.createOrder({
+        offer: [
+          {
+            token: "0x6f898cd313dcee4d28a87f675bd93c471868b0ac",
+            amount: "1500000000000000",
+          },
+        ],
+        consideration: [
+          {
+            itemType: ItemType.ERC721,
+            token: "0x424bdf2e8a6f52bd2c1c81d9437b0dc0309df90f",
+            identifier:
+              "107137215232458749996855170311736713895383956783073784797511084938723223236735",
+            recipient: accountTwo,
+          },
+          {
+            token: "0x6f898cd313dcee4d28a87f675bd93c471868b0ac",
+            amount: "7500000000000",
+            recipient: "0x2e7cc63800e77bb8c662c45ef33d1ccc23861532",
+          },
+          {
+            token: "0x6f898cd313dcee4d28a87f675bd93c471868b0ac",
+            amount: "37500000000000",
+            recipient: "0x5318579e61a7a6cd71a8fd163c1a6794b2695e2b",
+          },
+        ],
+        restrictedByZone: true,
+        zone: "0xCEF2071b4246DB4D0E076A377348339f31a07dEA",
+        startTime: Math.floor(new Date().getTime() / 1000).toString(),
+        endTime: Math.floor(
+          new Date(Date.now() + 24 * 60 * 60 * 1000).getTime() / 1000
+        ).toString(),
       });
-      console.log(`response: ${JSON.stringify(response)}`);
+
+      const executedOrder = await order.executeAllActions();
+      console.log({ executedOrder });
+
+      const { data } = await axios.post(
+        "https://api-testnet.doma.xyz/v1/orderbook/offer",
+        {
+          orderbook: "DOMA",
+          chainId: "eip155:97476",
+          parameters: executedOrder.parameters,
+          signature: executedOrder.signature,
+        },
+        {
+          headers: {
+            "API-Key": process.env.NEXT_PUBLIC_DOMA_API_KEY,
+          },
+        }
+      );
+      console.log({ data });
     } catch (error) {
       handleError(error, "Failed, try again later");
     } finally {
@@ -171,24 +126,43 @@ function PlaygroundDomainActions() {
     }
   }
 
+  // TODO: Approve ERC721 transfer before accepting offer
   async function handleAcceptOffer() {
     try {
       setIsProsessing(true);
       console.log("Accept offer...");
 
-      const signer = await getSigner();
-      const response = await domaClient.acceptOffer({
-        params: {
-          orderId:
-            "0x876b5a2b15c157891d5203223b18597bbe5bba55b3f2b167e6b11465e1de9691",
-        },
-        signer: signer,
-        chainId: "eip155:97476",
-        onProgress: (step: ProgressStep[]) => {
-          console.log(`Progress Step: ${JSON.stringify(step)}`);
-        },
+      const seaport = await getSeaport();
+
+      const offerId =
+        "0xa997cc958dee60a23b4f94e03909eb171e32960e60d87f6c2c180e8e28523e8d";
+      const fulfiller = accountOne;
+      const { data } = await axios.get(
+        `https://api-testnet.doma.xyz/v1/orderbook/offer/${offerId}/${fulfiller}`,
+        {
+          headers: {
+            "API-Key": process.env.NEXT_PUBLIC_DOMA_API_KEY,
+          },
+        }
+      );
+      console.log({ data });
+
+      const fulfill = await seaport.fulfillOrder({
+        order: data.order,
+        considerationCriteria: [],
+        conduitKey:
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+        recipientAddress: "0x0000000000000000000000000000000000000000",
+        extraData: data.extraData,
+        unitsToFill: 1,
       });
-      console.log(`response: ${JSON.stringify(response)}`);
+
+      const fulfillTransaction =
+        await fulfill.actions[0].transactionMethods.buildTransaction();
+      console.log({ fulfillTransaction });
+
+      const txReceipt = await fulfill.executeAllActions();
+      console.log("Order fulfilled:", txReceipt);
     } catch (error) {
       handleError(error, "Failed, try again later");
     } finally {
@@ -198,32 +172,8 @@ function PlaygroundDomainActions() {
 
   return (
     <div className="bg-card border p-6 rounded-xl">
-      <h2 className="text-2xl font-bold">Domain Actions</h2>
+      <h2 className="text-2xl font-bold">Seaport Actions</h2>
       <div className="flex flex-row gap-2">
-        <Button
-          onClick={handleCreateListing}
-          disabled={isProsessing}
-          className="mt-4"
-        >
-          {isProsessing ? (
-            <Loader2Icon className="animate-spin" />
-          ) : (
-            <ArrowRightIcon />
-          )}
-          Create Listing
-        </Button>
-        <Button
-          onClick={handleBuyListing}
-          disabled={isProsessing}
-          className="mt-4"
-        >
-          {isProsessing ? (
-            <Loader2Icon className="animate-spin" />
-          ) : (
-            <ArrowRightIcon />
-          )}
-          Buy Listing
-        </Button>
         <Button
           onClick={handleCreateOffer}
           disabled={isProsessing}
@@ -254,6 +204,7 @@ function PlaygroundDomainActions() {
 }
 
 function PlaygroundDomains() {
+  const { wallets } = useWallets();
   const { handleError } = useError();
   const [domains, setDomains] = useState<Domain[] | undefined>();
   const [isProsessing, setIsProsessing] = useState(false);
@@ -263,13 +214,16 @@ function PlaygroundDomains() {
       setIsProsessing(true);
       console.log("Load domains...");
 
-      const address = "0xcbFb1a51aCf21bdac6F62e41c6DfAd390e6Eb006";
+      const wallet = wallets[0];
+      if (!wallet) {
+        throw new Error("Wallet undefined");
+      }
+
       const query = `
 query {
   names(
     take: 50
-    ownedBy: ["eip155:1:${address}"]
-    claimStatus: CLAIMED
+    ownedBy: ["eip155:97476:${wallet.address}"]
     networkIds: ["eip155:97476"]
   ) {
     items {
