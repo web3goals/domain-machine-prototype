@@ -1,13 +1,15 @@
 import { mongodbConfig } from "@/config/mongodb";
+import { ObjectId } from "mongodb";
 import { Listing } from "../models/listing";
 import { getCollection } from "./collections";
 
-export async function insertListing(listing: Listing): Promise<void> {
+export async function insertListing(listing: Listing): Promise<ObjectId> {
   console.log("Inserting listing...");
   const collection = await getCollection<Listing>(
     mongodbConfig.collections.listings
   );
-  await collection.insertOne(listing);
+  const insertOneResult = await collection.insertOne(listing);
+  return insertOneResult.insertedId;
 }
 
 export async function findListings(args?: {

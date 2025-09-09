@@ -81,9 +81,11 @@ export async function POST(request: NextRequest) {
       domain: bodyParseResult.data.domain,
       domainScore: domainScore,
     };
-    await insertListing(listing);
+    const listingId = await insertListing(listing);
 
-    return createSuccessApiResponse();
+    return createSuccessApiResponse({
+      listing: { ...listing, _id: listingId },
+    });
   } catch (error) {
     console.error("Failed to create a listing:", error);
     return createFailedApiResponse(
