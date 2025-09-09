@@ -9,7 +9,7 @@ export default function PageHeader(props: {
     if (isValidElement(props.icon)) {
       // Clone the icon element and add the required className
       return cloneElement(props.icon as ReactElement<{ className?: string }>, {
-        className: "size-12 text-primary-foreground",
+        className: "size-12 text-accent-foreground",
       });
     }
     // Fallback if icon is not a valid React element
@@ -19,7 +19,7 @@ export default function PageHeader(props: {
   return (
     <div className="flex flex-row items-center gap-4">
       {/* Icon */}
-      <div className="flex items-center justify-center size-24 rounded-full bg-primary">
+      <div className="flex items-center justify-center size-24 rounded-full bg-accent">
         {renderIcon()}
       </div>
       {/* Title, subtitle */}

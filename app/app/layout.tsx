@@ -7,16 +7,16 @@ import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { ThemeProvider } from "next-themes";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fira_Code, Outfit } from "next/font/google";
 import { Toaster } from "sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const firaCode = Fira_Code({
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
@@ -41,8 +41,8 @@ export default function RootLayout({
       <body
         className={cn(
           `min-h-screen bg-background font-sans antialiased`,
-          geistSans.variable,
-          geistMono.variable
+          outfit.variable,
+          firaCode.variable
         )}
       >
         <ThemeProvider
