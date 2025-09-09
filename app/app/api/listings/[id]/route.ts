@@ -6,6 +6,7 @@ import { z } from "zod";
 const patchRequestBodySchema = z.object({
   buyerAddress: z.string().optional(),
   buyerOfferId: z.string().optional(),
+  buyCompletedTxHash: z.string().optional(),
 });
 
 export async function PATCH(request: NextRequest, params: { id: string }) {
@@ -34,7 +35,7 @@ export async function PATCH(request: NextRequest, params: { id: string }) {
       return createFailedApiResponse({ message: `Listing not found` }, 404);
     }
 
-    // Update the listing
+    // Update the listing if bought
     if (
       bodyParseResult.data.buyerAddress &&
       bodyParseResult.data.buyerOfferId
@@ -42,8 +43,16 @@ export async function PATCH(request: NextRequest, params: { id: string }) {
       listing.boughtAt = new Date();
       listing.buyerAddress = bodyParseResult.data.buyerAddress;
       listing.buyerOfferId = bodyParseResult.data.buyerOfferId;
-      await upsertListing(listing);
     }
+
+    // Update the listing if buy completed
+    if (bodyParseResult.data.buyCompletedTxHash) {
+      listing.buyCompletedAt = new Date();
+      listing.buyCompleteTxHash = bodyParseResult.data.buyCompletedTxHash;
+    }
+
+    // Save the updated or not updated listing
+    await upsertListing(listing);
 
     return createSuccessApiResponse({ listing });
   } catch (error) {

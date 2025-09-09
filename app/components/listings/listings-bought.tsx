@@ -14,20 +14,27 @@ export default function ListingsBought() {
   const { handleError } = useError();
   const [listings, setListings] = useState<Listing[] | undefined>();
 
-  useEffect(() => {
-    console.log("Loading listings...");
+  async function loadListings() {
+    try {
+      console.log("Loading listings...");
 
-    const wallet = wallets[0];
-    if (!wallet) {
-      return;
+      const wallet = wallets[0];
+      if (!wallet) {
+        return;
+      }
+
+      const { data } = await axios.get("/api/listings", {
+        params: { buyerAddress: wallet.address },
+      });
+
+      setListings(data.data.listings);
+    } catch (error) {
+      handleError(error, "Failed to load listings, try again later");
     }
+  }
 
-    axios
-      .get("/api/listings", { params: { buyerAddress: wallet.address } })
-      .then(({ data }) => setListings(data.data.listings))
-      .catch((error) =>
-        handleError(error, "Failed to load listings, try again later")
-      );
+  useEffect(() => {
+    loadListings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallets]);
 
@@ -42,7 +49,11 @@ export default function ListingsBought() {
       <EntityList<Listing>
         entities={listings}
         renderEntityCard={(listing) => (
-          <ListingCard key={listing._id!.toString()} listing={listing} />
+          <ListingCard
+            key={listing._id!.toString()}
+            listing={listing}
+            onUpdate={() => loadListings()}
+          />
         )}
         noEntitiesText="No listings bought yet"
         className="mt-8"

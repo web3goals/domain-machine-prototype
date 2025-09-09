@@ -11,6 +11,11 @@ export class Listing {
     public boughtAt?: Date,
     public buyerAddress?: string,
     public buyerOfferId?: string,
+    public buyCompletedAt?: Date,
+    public buyCompleteTxHash?: string,
+    public treasurySharedAt?: Date,
+    public treasuryShareValue?: string,
+    public treasuryShareTxHash?: string,
     public _id?: ObjectId
   ) {}
 }
