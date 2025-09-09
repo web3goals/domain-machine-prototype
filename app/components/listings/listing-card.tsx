@@ -18,6 +18,7 @@ export function ListingCard(props: { listing: Listing }) {
       <div className="flex-1">
         <div className="flex flex-col gap-4">
           <ListingCardCreatedAt listing={props.listing} />
+          <ListingCardBoughtAt listing={props.listing} />
           <ListingCardScore listing={props.listing} />
           <ListingCardStatus />
           <Separator className="my-2" />
@@ -41,6 +42,32 @@ function ListingCardCreatedAt(props: { listing: Listing }) {
           <p className="text-sm text-muted-foreground">Listed</p>
           <p className="text-sm">
             {new Date(props.listing.createdAt).toLocaleString()}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return <></>;
+}
+
+function ListingCardBoughtAt(props: { listing: Listing }) {
+  const { wallets } = useWallets();
+
+  if (
+    wallets[0] &&
+    wallets[0].address === props.listing.buyerAddress &&
+    props.listing.boughtAt
+  ) {
+    return (
+      <div className="flex flex-row gap-3">
+        <div className="flex items-center justify-center size-8 rounded-full bg-primary">
+          <CalendarIcon className="size-4 text-primary-foreground" />
+        </div>
+        <div className="flex-1">
+          <p className="text-sm text-muted-foreground">Bought</p>
+          <p className="text-sm">
+            {new Date(props.listing.boughtAt).toLocaleString()}
           </p>
         </div>
       </div>

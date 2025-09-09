@@ -1,7 +1,8 @@
 import { createFailedApiResponse, createSuccessApiResponse } from "@/lib/api";
 import { Listing } from "@/mongodb/models/listing";
-import { findListings, insertListing } from "@/mongodb/services/listings";
+import { findListings, upsertListing } from "@/mongodb/services/listings";
 import { DomainScore } from "@/types/domain-score";
+import { ObjectId } from "mongodb";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -20,20 +21,16 @@ export async function GET(request: NextRequest) {
   try {
     console.log("Getting listings...");
 
-    // Extract creatorAddress query parameter
+    // Extract query parameters
     const searchParams = request.nextUrl.searchParams;
     const creatorAddress = searchParams.get("creatorAddress");
-
-    // Check if creatorAddress is provided
-    if (!creatorAddress) {
-      return createFailedApiResponse(
-        { message: "creatorAddress query parameter is required" },
-        400
-      );
-    }
+    const buyerAddress = searchParams.get("buyerAddress");
 
     // Fetch listings with filter
-    const listings = await findListings({ creatorAddress });
+    const listings = await findListings({
+      creatorAddress: creatorAddress || undefined,
+      buyerAddress: buyerAddress || undefined,
+    });
 
     return createSuccessApiResponse({ listings });
   } catch (error) {
@@ -80,11 +77,12 @@ export async function POST(request: NextRequest) {
       creatorAddress: bodyParseResult.data.creatorAddress,
       domain: bodyParseResult.data.domain,
       domainScore: domainScore,
+      _id: new ObjectId(),
     };
-    const listingId = await insertListing(listing);
+    await upsertListing(listing);
 
     return createSuccessApiResponse({
-      listing: { ...listing, _id: listingId },
+      listing,
     });
   } catch (error) {
     console.error("Failed to create a listing:", error);
