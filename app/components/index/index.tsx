@@ -27,13 +27,12 @@ export default function Index() {
             fixed-price mystery boxes, offering random domains scored from 0-100
             and driving higher engagement for sellers
           </p>
-          <div className="flex flex-row gap-2 mt-4">
+          <div className="flex flex-row gap-2 mt-6">
             <Link href="/boxes/buy">
               <Button>
                 <GiftIcon /> Buy Mystery Box
               </Button>
             </Link>
-            {/* TODO: Define icon, link */}
             <Link href="/listings/created">
               <Button variant="secondary">
                 <CoinsIcon /> Sell Domains
