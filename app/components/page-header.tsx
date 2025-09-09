@@ -24,10 +24,12 @@ export default function PageHeader(props: {
       </div>
       {/* Title, subtitle */}
       <div className="flex-1">
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter">
           {props.title}
         </h1>
-        <p className="text-muted-foreground mt-1">{props.subtitle}</p>
+        <p className="font-medium tracking-tight text-muted-foreground mt-1">
+          {props.subtitle}
+        </p>
       </div>
     </div>
   );
