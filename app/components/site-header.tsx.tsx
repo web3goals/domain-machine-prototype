@@ -7,12 +7,16 @@ import {
 } from "@/lib/converters";
 import { usePrivy } from "@privy-io/react-auth";
 import {
+  BoxesIcon,
+  CoinsIcon,
+  GiftIcon,
   GithubIcon,
   JoystickIcon,
   LogInIcon,
   LogOutIcon,
   MenuIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import {
@@ -22,7 +26,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import Image from "next/image";
 
 export function SiteHeader() {
   const { ready, authenticated, user, login, logout } = usePrivy();
@@ -59,6 +62,17 @@ export function SiteHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+              {process.env.NODE_ENV === "development" && (
+                <>
+                  <Link href="/playground">
+                    <DropdownMenuItem>
+                      <JoystickIcon />
+                      <span>Playground</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <DropdownMenuSeparator />
+                </>
+              )}
               {ready && !authenticated && (
                 <DropdownMenuItem onClick={() => login()}>
                   <LogInIcon />
@@ -67,14 +81,24 @@ export function SiteHeader() {
               )}
               {ready && authenticated && (
                 <>
-                  {/* TODO: Delete this link for production */}
-                  <Link href="/playground">
+                  <Link href="/listings/boxes/buy">
                     <DropdownMenuItem>
-                      <JoystickIcon />
-                      <span>Playground</span>
+                      <GiftIcon />
+                      <span>Buy mystery box</span>
                     </DropdownMenuItem>
                   </Link>
-                  <DropdownMenuSeparator />
+                  <Link href="/listings/bought">
+                    <DropdownMenuItem>
+                      <BoxesIcon />
+                      <span>Bought domains</span>
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/listings/created">
+                    <DropdownMenuItem>
+                      <CoinsIcon />
+                      <span>Sell domains</span>
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem onClick={() => logout()}>
                     <LogOutIcon />
                     <span>
