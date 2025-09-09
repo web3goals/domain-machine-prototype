@@ -1,3 +1,4 @@
+import { DevIndicator } from "@/components/dev-indicator";
 import PrivyProvider from "@/components/privy-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header.tsx";
@@ -57,6 +58,7 @@ export default function RootLayout({
               <SiteFooter />
               <Toaster />
             </div>
+            <DevIndicator />
           </PrivyProvider>
         </ThemeProvider>
       </body>
