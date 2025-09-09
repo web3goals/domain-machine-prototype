@@ -23,7 +23,7 @@ import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
 import { useRouter } from "next/navigation";
 
-export default function CreateListing() {
+export default function ListingCreate() {
   const { wallets } = useWallets();
   const { handleError } = useError();
   const [domains, setDomains] = useState<Domain[] | undefined>(undefined);
@@ -97,7 +97,7 @@ query {
       />
       <Separator className="my-8" />
       {domains ? (
-        <CreateListingForm domains={domains} />
+        <ListingCreateForm domains={domains} />
       ) : (
         <div className="flex flex-col gap-4">
           <Skeleton className="h-6" />
@@ -109,7 +109,7 @@ query {
   );
 }
 
-function CreateListingForm(props: { domains: Domain[] }) {
+function ListingCreateForm(props: { domains: Domain[] }) {
   const { wallets } = useWallets();
   const { handleError } = useError();
   const router = useRouter();

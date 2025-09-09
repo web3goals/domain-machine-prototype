@@ -18,7 +18,7 @@ export function ListingCard(props: { listing: Listing }) {
       <div className="flex-1">
         <div className="flex flex-col gap-4">
           <ListingCardCreatedAt listing={props.listing} />
-          <ListinCardScore listing={props.listing} />
+          <ListingCardScore listing={props.listing} />
           <ListingCardStatus />
           <Separator className="my-4" />
           <ListingCardActions listing={props.listing} />
@@ -50,7 +50,7 @@ function ListingCardCreatedAt(props: { listing: Listing }) {
   return <></>;
 }
 
-function ListinCardScore(props: { listing: Listing }) {
+function ListingCardScore(props: { listing: Listing }) {
   return (
     <div className="flex flex-row gap-3">
       <div className="flex items-center justify-center size-8 rounded-full bg-primary">

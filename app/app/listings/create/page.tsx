@@ -1,15 +1,15 @@
 "use client";
 
-import CreateListing from "@/components/listings/listing-create";
+import ListingCreate from "@/components/listings/listing-create";
 import { Loading } from "@/components/loading";
 import { Login } from "@/components/login";
 import { usePrivy } from "@privy-io/react-auth";
 
-export default function CreateListingPage() {
+export default function ListingCreatePage() {
   const { ready, authenticated } = usePrivy();
 
   if (ready && authenticated) {
-    return <CreateListing />;
+    return <ListingCreate />;
   }
 
   if (ready && !authenticated) {

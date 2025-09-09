@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { ListingCard } from "./listing-card";
 
-export default function CreatedListings() {
+export default function ListingsCreated() {
   const { wallets } = useWallets();
   const { handleError } = useError();
   const [listings, setListings] = useState<Listing[] | undefined>();
