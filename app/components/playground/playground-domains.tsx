@@ -10,11 +10,11 @@ export default function PlaygroundDomains() {
   const { wallets } = useWallets();
   const { handleError } = useError();
   const [domains, setDomains] = useState<Domain[] | undefined>();
-  const [isProsessing, setIsProsessing] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   async function handleLoadDomains() {
     try {
-      setIsProsessing(true);
+      setIsProcessing(true);
       console.log("Load domains...");
 
       const wallet = wallets[0];
@@ -69,7 +69,7 @@ query {
     } catch (error) {
       handleError(error, "Failed, try again later");
     } finally {
-      setIsProsessing(false);
+      setIsProcessing(false);
     }
   }
 
@@ -78,10 +78,10 @@ query {
       <h2 className="text-2xl font-bold">Domains</h2>
       <Button
         onClick={handleLoadDomains}
-        disabled={isProsessing}
+        disabled={isProcessing}
         className="mt-4"
       >
-        {isProsessing ? (
+        {isProcessing ? (
           <Loader2Icon className="animate-spin" />
         ) : (
           <ArrowRightIcon />

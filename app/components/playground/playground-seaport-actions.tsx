@@ -12,7 +12,7 @@ import { useState } from "react";
 export default function PlaygroundSeaportActions() {
   const { handleError } = useError();
   const { wallets } = useWallets();
-  const [isProsessing, setIsProsessing] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const accountOne = "0xcbFb1a51aCf21bdac6F62e41c6DfAd390e6Eb006";
   const accountTwo = "0xf35b5c255FDdF8057B8Df4C59a1FDb81193994dE";
 
@@ -43,7 +43,7 @@ export default function PlaygroundSeaportActions() {
   // TODO: Approve WETH spending before creating offer
   async function handleCreateOffer() {
     try {
-      setIsProsessing(true);
+      setIsProcessing(true);
       console.log("Create offer...");
 
       const seaport = await getSeaport();
@@ -102,14 +102,14 @@ export default function PlaygroundSeaportActions() {
     } catch (error) {
       handleError(error, "Failed, try again later");
     } finally {
-      setIsProsessing(false);
+      setIsProcessing(false);
     }
   }
 
   // TODO: Approve ERC721 transfer before accepting offer
   async function handleAcceptOffer() {
     try {
-      setIsProsessing(true);
+      setIsProcessing(true);
       console.log("Accept offer...");
 
       const seaport = await getSeaport();
@@ -146,7 +146,7 @@ export default function PlaygroundSeaportActions() {
     } catch (error) {
       handleError(error, "Failed, try again later");
     } finally {
-      setIsProsessing(false);
+      setIsProcessing(false);
     }
   }
 
@@ -156,10 +156,10 @@ export default function PlaygroundSeaportActions() {
       <div className="flex flex-row gap-2">
         <Button
           onClick={handleCreateOffer}
-          disabled={isProsessing}
+          disabled={isProcessing}
           className="mt-4"
         >
-          {isProsessing ? (
+          {isProcessing ? (
             <Loader2Icon className="animate-spin" />
           ) : (
             <ArrowRightIcon />
@@ -168,10 +168,10 @@ export default function PlaygroundSeaportActions() {
         </Button>
         <Button
           onClick={handleAcceptOffer}
-          disabled={isProsessing}
+          disabled={isProcessing}
           className="mt-4"
         >
-          {isProsessing ? (
+          {isProcessing ? (
             <Loader2Icon className="animate-spin" />
           ) : (
             <ArrowRightIcon />
