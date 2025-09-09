@@ -23,7 +23,7 @@ export default function PageHeader(props: {
         {renderIcon()}
       </div>
       {/* Title, subtitle */}
-      <div>
+      <div className="flex-1">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mt-2">
           {props.title}
         </h1>
