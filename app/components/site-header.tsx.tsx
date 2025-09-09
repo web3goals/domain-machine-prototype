@@ -81,7 +81,7 @@ export function SiteHeader() {
               )}
               {ready && authenticated && (
                 <>
-                  <Link href="/listings/boxes/buy">
+                  <Link href="/boxes/buy">
                     <DropdownMenuItem>
                       <GiftIcon />
                       <span>Buy mystery box</span>

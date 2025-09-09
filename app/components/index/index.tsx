@@ -28,8 +28,7 @@ export default function Index() {
             and driving higher engagement for sellers
           </p>
           <div className="flex flex-row gap-2 mt-4">
-            {/* TODO: Define icon, link */}
-            <Link href="/listings/boxes/buy">
+            <Link href="/boxes/buy">
               <Button>
                 <GiftIcon /> Buy Mystery Box
               </Button>
