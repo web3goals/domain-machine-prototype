@@ -9,7 +9,7 @@ import EntityList from "../entity-list";
 import PageHeader from "../page-header";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { CreatedListingCard } from "./listing-created-card";
+import { ListingCard } from "./listing-card";
 
 export default function CreatedListings() {
   const { wallets } = useWallets();
@@ -49,7 +49,7 @@ export default function CreatedListings() {
       <EntityList<Listing>
         entities={listings}
         renderEntityCard={(listing) => (
-          <CreatedListingCard key={listing._id!.toString()} listing={listing} />
+          <ListingCard key={listing._id!.toString()} listing={listing} />
         )}
         noEntitiesText="No listings created yet"
         className="mt-8"
