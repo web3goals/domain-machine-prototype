@@ -1,8 +1,20 @@
-// TODO: Implement
+"use client";
+
+import CreateListing from "@/components/listings/listing-create";
+import { Loading } from "@/components/loading";
+import { Login } from "@/components/login";
+import { usePrivy } from "@privy-io/react-auth";
+
 export default function CreateListingPage() {
-  return (
-    <div className="container mx-auto px-4 lg:px-80 py-16">
-      <p>...</p>
-    </div>
-  );
+  const { ready, authenticated } = usePrivy();
+
+  if (ready && authenticated) {
+    return <CreateListing />;
+  }
+
+  if (ready && !authenticated) {
+    return <Login />;
+  }
+
+  return <Loading />;
 }
