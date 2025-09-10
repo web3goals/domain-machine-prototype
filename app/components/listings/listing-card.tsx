@@ -15,8 +15,18 @@ import useError from "@/hooks/use-error";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { formatEther } from "viem";
+import {
+  Address,
+  createPublicClient,
+  createWalletClient,
+  custom,
+  erc721Abi,
+  formatEther,
+  http,
+} from "viem";
 import { chainConfig } from "@/config/chain";
+import { ethers } from "ethers";
+import { Seaport } from "@opensea/seaport-js";
 
 export function ListingCard(props: { listing: Listing; onUpdate: () => void }) {
   const { wallets } = useWallets();
@@ -229,16 +239,90 @@ function ListingCardActions(props: {
       console.log("Completing sale...");
       setIsProcessing(true);
 
+      // Check wallet
       const wallet = wallets[0];
       if (!wallet) {
         throw new Error("Wallet undefined");
       }
+      if (
+        wallet.chainId.replace("eip155:", "") !==
+        chainConfig.chain.id.toString()
+      ) {
+        throw new Error("Wrong chain");
+      }
 
-      // TODO: Implement
-      // Accept the offer using Doma protocol
-      const txHash = "0x0";
+      // Create provider, clients
+      const provider = await wallet.getEthereumProvider();
+      const publicClient = createPublicClient({
+        chain: chainConfig.chain,
+        transport: http(),
+      });
+      const walletClient = createWalletClient({
+        chain: chainConfig.chain,
+        transport: custom(provider),
+      });
+
+      // Create signer, seaport
+      const ethersProvider = new ethers.BrowserProvider(provider);
+      const signer = await ethersProvider.getSigner();
+      const seaport = new Seaport(signer, {
+        overrides: {
+          contractAddress: chainConfig.seaportContractAddress,
+          seaportVersion: chainConfig.seaportVersion,
+        },
+      });
+
+      // Check domain token approval
+      console.log("Checking domain token approval...");
+      const isApproved = await publicClient.readContract({
+        address: props.listing.domain.tokenAddress as Address,
+        abi: erc721Abi,
+        functionName: "isApprovedForAll",
+        args: [
+          wallet.address as Address,
+          chainConfig.seaportContractAddress as Address,
+        ],
+      });
+
+      if (!isApproved) {
+        console.log("Approving domain token...");
+        const { request } = await publicClient.simulateContract({
+          address: props.listing.domain.tokenAddress as Address,
+          abi: erc721Abi,
+          functionName: "setApprovalForAll",
+          args: [chainConfig.seaportContractAddress as Address, true],
+          account: wallet.address as Address,
+        });
+        await walletClient.writeContract(request);
+      }
+
+      // Get the offer from Doma marketplace
+      console.log("Getting offer from Doma marketplace...");
+      const { data } = await axios.get(
+        `https://api-testnet.doma.xyz/v1/orderbook/offer/${props.listing.buyerOfferId}/${wallet.address}`,
+        {
+          headers: {
+            "API-Key": process.env.NEXT_PUBLIC_DOMA_API_KEY,
+          },
+        }
+      );
+
+      // Fulfill the offer
+      console.log("Fulfilling offer...");
+      const fulfill = await seaport.fulfillOrder({
+        order: data.order,
+        extraData: data.extraData,
+        considerationCriteria: [],
+        conduitKey:
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+        recipientAddress: "0x0000000000000000000000000000000000000000",
+        unitsToFill: 1,
+      });
+      const txResponse = await fulfill.executeAllActions();
+      const txHash = (txResponse as ethers.TransactionResponse).hash;
 
       // Update listing
+      console.log("Updating listing...");
       await axios.patch(`/api/listings/${props.listing._id}`, {
         buyCompletedTxHash: txHash,
       });
