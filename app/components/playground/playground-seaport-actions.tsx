@@ -42,7 +42,6 @@ export default function PlaygroundSeaportActions() {
     });
   }
 
-  // TODO: Approve WETH spending before creating offer
   async function handleCreateOffer() {
     try {
       setIsProcessing(true);
@@ -108,7 +107,6 @@ export default function PlaygroundSeaportActions() {
     }
   }
 
-  // TODO: Approve ERC721 transfer before accepting offer
   async function handleAcceptOffer() {
     try {
       setIsProcessing(true);

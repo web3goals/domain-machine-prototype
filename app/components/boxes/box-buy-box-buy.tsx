@@ -26,7 +26,6 @@ export default function BoxBuyBoxBuy(props: {
   const { handleError } = useError();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // TODO: Create a box, pay for it, get a listing
   async function handleBuyBox() {
     try {
       console.log("Buying box...");
