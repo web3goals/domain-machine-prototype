@@ -9,12 +9,15 @@ const patchRequestBodySchema = z.object({
   buyCompletedTxHash: z.string().optional(),
 });
 
-export async function PATCH(request: NextRequest, params: { id: string }) {
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     console.log("Patching a listing...");
 
     // Get listing ID from params
-    const id = params.id;
+    const { id } = await params;
 
     // Get and parse request data
     const body = await request.json();
