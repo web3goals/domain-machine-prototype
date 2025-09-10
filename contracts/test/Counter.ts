@@ -14,7 +14,7 @@ describe("Counter", async function () {
       counter.write.inc(),
       counter,
       "Increment",
-      [1n],
+      [1n]
     );
   });
 
