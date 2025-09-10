@@ -1,3 +1,3 @@
-# 🌀 Domain Machine
+# 🎰 Domain Machine
 
 ...
