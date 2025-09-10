@@ -42,7 +42,7 @@ export async function PATCH(request: NextRequest, params: { id: string }) {
     ) {
       listing.boughtAt = new Date();
       listing.buyerAddress = bodyParseResult.data.buyerAddress;
-      listing.buyerOfferId = bodyParseResult.data.buyerOfferId;
+      listing.buyOfferId = bodyParseResult.data.buyerOfferId;
     }
 
     // Update the listing if buy completed

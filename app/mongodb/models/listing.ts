@@ -11,7 +11,7 @@ export class Listing {
     public buyValue: string, // Amount of tokens to buy the domain
     public boughtAt?: Date,
     public buyerAddress?: string,
-    public buyerOfferId?: string,
+    public buyOfferId?: string,
     public buyCompletedAt?: Date,
     public buyCompleteTxHash?: string,
     public treasurySharedAt?: Date,

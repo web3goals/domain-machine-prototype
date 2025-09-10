@@ -299,7 +299,7 @@ function ListingCardActions(props: {
       // Get the offer from Doma marketplace
       console.log("Getting offer from Doma marketplace...");
       const { data } = await axios.get(
-        `https://api-testnet.doma.xyz/v1/orderbook/offer/${props.listing.buyerOfferId}/${wallet.address}`,
+        `https://api-testnet.doma.xyz/v1/orderbook/offer/${props.listing.buyOfferId}/${wallet.address}`,
         {
           headers: {
             "API-Key": process.env.NEXT_PUBLIC_DOMA_API_KEY,
