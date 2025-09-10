@@ -13,5 +13,5 @@
 ### Template for .env file
 
 ```
-
+DOMA_PRIVATE_KEY=
 ```
