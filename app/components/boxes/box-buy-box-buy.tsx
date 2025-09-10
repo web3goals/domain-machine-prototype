@@ -1,3 +1,5 @@
+import { treasuryAbi } from "@/abi/treasury";
+import { chainConfig } from "@/config/chain";
 import useError from "@/hooks/use-error";
 import { Box } from "@/mongodb/models/box";
 import { Listing } from "@/mongodb/models/listing";
@@ -6,9 +8,16 @@ import axios from "axios";
 import { DollarSignIcon, GiftIcon, Loader2Icon, StarIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import {
+  Address,
+  createPublicClient,
+  createWalletClient,
+  custom,
+  erc20Abi,
+  formatEther,
+  http,
+} from "viem";
 import { Button } from "../ui/button";
-import { formatEther } from "viem";
-import { chainConfig } from "@/config/chain";
 
 export default function BoxBuyBoxBuy(props: {
   onBuyBox: (box: Box, listing: Listing) => void;
@@ -23,18 +32,73 @@ export default function BoxBuyBoxBuy(props: {
       console.log("Buying box...");
       setIsProcessing(true);
 
+      // Check wallet
       const wallet = wallets[0];
       if (!wallet) {
         throw new Error("Wallet undefined");
       }
+      if (
+        wallet.chainId.replace("eip155:", "") !==
+        chainConfig.chain.id.toString()
+      ) {
+        throw new Error("Wrong chain");
+      }
 
-      // TODO: Implement
-      // Use contract to pay for a mystery box
-      const txHash = "0x0";
+      // Create provider, clients
+      const provider = await wallet.getEthereumProvider();
+      const publicClient = createPublicClient({
+        chain: chainConfig.chain,
+        transport: http(),
+      });
+      const walletClient = createWalletClient({
+        chain: chainConfig.chain,
+        transport: custom(provider),
+      });
 
-      // Create a mystery box with a random listing
+      // Check buy token allowance
+      console.log("Checking buy token allowance...");
+      const allowance = await publicClient.readContract({
+        address: chainConfig.buyTokenAddress as Address,
+        abi: erc20Abi,
+        functionName: "allowance",
+        args: [
+          wallet.address as Address,
+          chainConfig.treasuryContractAddress as Address,
+        ],
+      });
+
+      // Approve buy token if allowance is zero
+      if (allowance === 0n) {
+        console.log("Approving buy token...");
+        const { request } = await publicClient.simulateContract({
+          address: chainConfig.buyTokenAddress as Address,
+          abi: erc20Abi,
+          functionName: "approve",
+          args: [
+            chainConfig.treasuryContractAddress as Address,
+            2n ** 256n - 1n,
+          ],
+          account: wallet.address as Address,
+        });
+        const hash = await walletClient.writeContract(request);
+        await publicClient.waitForTransactionReceipt({ hash });
+      }
+
+      // Pay for a box
+      console.log("Paying for a box...");
+      const { request } = await publicClient.simulateContract({
+        address: chainConfig.treasuryContractAddress as Address,
+        abi: treasuryAbi,
+        functionName: "depositToken",
+        args: [chainConfig.buyTokenAddress as Address, chainConfig.buyBoxValue],
+        account: wallet.address as Address,
+      });
+      const hash = await walletClient.writeContract(request);
+      await publicClient.waitForTransactionReceipt({ hash });
+
+      // Create a box
       const { data } = await axios.post("/api/boxes", {
-        txHash,
+        buyTxHash: hash,
         creatorAddress: wallet.address,
       });
       const box = data.data.box;

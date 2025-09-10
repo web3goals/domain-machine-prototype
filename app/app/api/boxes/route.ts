@@ -6,8 +6,8 @@ import { NextRequest } from "next/server";
 import z from "zod";
 
 const postRequestBodySchema = z.object({
-  txHash: z.string(),
   creatorAddress: z.string(),
+  buyTxHash: z.string(),
 });
 
 export async function POST(request: NextRequest) {
@@ -37,8 +37,8 @@ export async function POST(request: NextRequest) {
     // Create a box
     const box: Box = {
       createdAt: new Date(),
-      creatorAddress: body.creatorAddress,
-      txHash: body.txHash,
+      creatorAddress: bodyParseResult.data.creatorAddress,
+      buyTxHash: bodyParseResult.data.buyTxHash,
       listingId: listing._id!,
     };
     const boxId = await insertBox(box);

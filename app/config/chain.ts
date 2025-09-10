@@ -6,7 +6,7 @@ export const chainConfig = {
   seaportContractAddress: "0x0000000000000068F116a894984e2DB1123eB395",
   seaportVersion: "1.6",
   treasuryContractAddress: "0x2168609301437822c7ad3f35114b10941866f20a",
-  buyBoxValue: parseEther("0.005"),
+  buyBoxValue: parseEther("0.003"),
   buyDomainValue: parseEther("0.0015"),
   buyTokenAddress: "0x6f898cd313dcee4d28a87f675bd93c471868b0ac",
   buyTokenSymbol: "WETH",
