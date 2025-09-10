@@ -1,22 +1,5 @@
-import { defineChain, parseEther } from "viem";
-
-const domaTestnet = defineChain({
-  id: 97476,
-  name: "Doma Testnet",
-  nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-  rpcUrls: {
-    default: {
-      http: ["https://rpc-testnet.doma.xyz"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Doma Testnet Blockchain Explorer",
-      url: "https://explorer-testnet.doma.xyz",
-    },
-  },
-  testnet: true,
-});
+import { domaTestnet } from "@/chains/doma-testnet";
+import { parseEther } from "viem";
 
 export const chainConfig = {
   chain: domaTestnet,
