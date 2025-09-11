@@ -26,11 +26,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Find only not bought listings
     // Get a random listing for the box
-    const listings = await findListings();
+    const listings = await findListings({ boughtAtExists: false });
     if (listings.length === 0) {
-      throw new Error("No listings available to create a box");
+      return createFailedApiResponse(
+        { message: "No listings available to create a box" },
+        503
+      );
     }
     const listing = listings[Math.floor(Math.random() * listings.length)];
 

@@ -22,6 +22,7 @@ export async function findListings(args?: {
   id?: string;
   domainName?: string;
   creatorAddress?: string;
+  boughtAtExists?: boolean;
   buyerAddress?: string;
 }): Promise<Listing[]> {
   console.log("Finding listings...");
@@ -35,6 +36,9 @@ export async function findListings(args?: {
         creatorAddress: args.creatorAddress,
       }),
       ...(args?.domainName !== undefined && { "domain.name": args.domainName }),
+      ...(args?.boughtAtExists !== undefined && {
+        boughtAt: args.boughtAtExists ? { $exists: true } : { $exists: false },
+      }),
       ...(args?.buyerAddress !== undefined && {
         buyerAddress: args.buyerAddress,
       }),
