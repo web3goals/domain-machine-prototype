@@ -43,7 +43,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// TODO: Check that the domain is not already listed
 export async function POST(request: NextRequest) {
   try {
     console.log("Creating a listing...");
@@ -57,6 +56,17 @@ export async function POST(request: NextRequest) {
           message: `Request body invalid: ${JSON.stringify(bodyParseResult)}`,
         },
         400
+      );
+    }
+
+    // Check if the domain is already listed
+    const existingListings = await findListings({
+      domainName: bodyParseResult.data.domain.name,
+    });
+    if (existingListings.length > 0) {
+      return createFailedApiResponse(
+        { message: "Domain is already listed" },
+        409
       );
     }
 
