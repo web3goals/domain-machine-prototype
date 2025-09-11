@@ -3,6 +3,9 @@ export const siteConfig = {
   description: "Gamified Domain Trading with Mystery Boxes",
   links: {
     github: "https://github.com/web3goals/domain-machine-prototype",
-    twitter: "https://twitter.com/kiv1n",
+    x: {
+      project: "https://x.com/domain_machine",
+      developer: "https://x.com/kiv1n",
+    },
   },
 };

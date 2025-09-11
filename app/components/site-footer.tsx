@@ -8,7 +8,7 @@ export function SiteFooter() {
         <p className="text-balance text-center md:text-left text-sm leading-loose">
           Built by{" "}
           <a
-            href={siteConfig.links.twitter}
+            href={siteConfig.links.x.developer}
             target="_blank"
             rel="noreferrer"
             className="font-medium underline underline-offset-4"

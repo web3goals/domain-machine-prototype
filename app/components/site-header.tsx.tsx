@@ -9,8 +9,8 @@ import { usePrivy } from "@privy-io/react-auth";
 import {
   BoxesIcon,
   CoinsIcon,
+  ExternalLinkIcon,
   GiftIcon,
-  GithubIcon,
   JoystickIcon,
   LogInIcon,
   LogOutIcon,
@@ -114,10 +114,15 @@ export function SiteHeader() {
                 </>
               )}
               <DropdownMenuSeparator />
-              {/* TODO: Add X link */}
+              <Link href={siteConfig.links.x.project} target="_blank">
+                <DropdownMenuItem>
+                  <ExternalLinkIcon />
+                  <span>X</span>
+                </DropdownMenuItem>
+              </Link>
               <Link href={siteConfig.links.github} target="_blank">
                 <DropdownMenuItem>
-                  <GithubIcon />
+                  <ExternalLinkIcon />
                   <span>GitHub</span>
                 </DropdownMenuItem>
               </Link>
