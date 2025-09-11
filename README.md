@@ -16,7 +16,21 @@ That’s why we decided to create this platform.
 
 ## 🛠️ How it works
 
-...
+### 📋 Listing
+
+- A seller tokenizes domains on D3 Protocol and lists them in the app.
+- Each domain loads from Doma Subgraph and gets a score (0-100) based on Moz DA, Ahrefs DR, and Semrush Authority.
+
+### 🎰 Buying
+
+- A buyer pays 0.003 WETH to open mystery boxes and receive a random domain.
+- A buyer can make 0.0015 WETH offers on domains they want to purchase.
+- A seller accepts offers through Doma Marketplace and receives payment.
+
+### 🎁 Rewards
+
+- Daily treasury distributions reward sellers based on their sold domains' scores.
+- A seller can track their rewards history in the app.
 
 ## 🔗 Artifacts
 
