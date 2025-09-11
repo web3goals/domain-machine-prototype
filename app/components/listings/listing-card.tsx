@@ -174,7 +174,6 @@ function ListingCardStatusContent(props: {
     );
   }
 
-  // TODO: Add link to the transactions
   if (
     props.isSeller &&
     props.listing.buyCompletedAt &&
@@ -191,7 +190,6 @@ function ListingCardStatusContent(props: {
     );
   }
 
-  // TODO: Add link to the transactions
   if (
     props.isSeller &&
     props.listing.buyCompletedAt &&
