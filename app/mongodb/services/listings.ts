@@ -20,6 +20,7 @@ export async function upsertListing(
 
 export async function findListings(args?: {
   id?: string;
+  domainName?: string;
   creatorAddress?: string;
   buyerAddress?: string;
 }): Promise<Listing[]> {
@@ -33,6 +34,7 @@ export async function findListings(args?: {
       ...(args?.creatorAddress !== undefined && {
         creatorAddress: args.creatorAddress,
       }),
+      ...(args?.domainName !== undefined && { "domain.name": args.domainName }),
       ...(args?.buyerAddress !== undefined && {
         buyerAddress: args.buyerAddress,
       }),
