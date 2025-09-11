@@ -114,6 +114,7 @@ export function SiteHeader() {
                 </>
               )}
               <DropdownMenuSeparator />
+              {/* TODO: Add X link */}
               <Link href={siteConfig.links.github} target="_blank">
                 <DropdownMenuItem>
                   <GithubIcon />
